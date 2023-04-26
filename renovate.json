@@ -7,6 +7,7 @@
             "matchPackageNames": [
                 "prefecthq/prefect"
             ],
+            "matchUpdateTypes": ["major", "minor", "patch"],
             "matchCurrentVersion": "/^\\d+\\.\\d+\\.\\d+\\-python\\d+\\.\\d+$/",
             "matchCurrentValue": "/^\\d+\\.\\d+\\.\\d+\\-python\\d+\\.\\d+$/",
             "versioning": "loose",
