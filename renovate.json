@@ -1,0 +1,20 @@
+{
+    "packageRules": [
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "n8nio/n8n"
+            ],
+            "versioning": "semver",
+            "automerge": true,
+            "automergeType": "branch",
+            "ignoreTests": true
+        }
+    ],
+    "ignorePaths": ["**/.github/**"],
+    "extends": [
+      "config:base"
+    ]
+}
