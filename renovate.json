@@ -7,6 +7,7 @@
             "matchPackageNames": [
                 "prefecthq/prefect"
             ],
+            "matchCurrentVersion": "/^\\d+\\.\\d+\\.\\d+\\-python\\d+\\.\\d+$/",
             "versioning": "semver",
             "automerge": true,
             "automergeType": "branch",
