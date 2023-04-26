@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:14
+    command:
+      - postgres
+      - -c
+      - max_connections=150
+    environment:
+      POSTGRES_USER: prefect
+      POSTGRES_PASSWORD: prefectpwd
+      POSTGRES_DB: prefect
+    healthcheck:
+      interval: 10s
+      retries: 60
+      start_period: 2s
+      test: pg_isready -q -d $${POSTGRES_DB} -U $${POSTGRES_USER} | grep "accepting connections" || exit 1
+      timeout: 2s
+    ports:
+    - published: 5433
+      target: 5432
+    restart: on-failure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - prefect
+
+  prefect-server:
+    image: ghcr.io/panoti/prefect-orion:main
+    command:
+      - prefect
+      - orion
+      - start
+    ports:
+      - 4200:4200
+    volumes:
+      - prefect_data:/root/.prefect
+      - ${PWD}/flows:/flows
+    environment:
+      PREFECT_ORION_API_HOST: 0.0.0.0
+      PREFECT_ORION_DATABASE_CONNECTION_URL: postgresql+asyncpg://prefect:prefectpwd@postgres:5432/prefect
+      PREFECT_ORION_ANALYTICS_ENABLED: "false"
+      PREFECT_LOGGING_SERVER_LEVEL: WARNING
+      PREFECT_API_URL: http://prefect-server:4200/api
+    networks:
+      - prefect
+    depends_on:
+      postgres:
+        condition: service_started
+
+  prefect-agent:
+    image: ghcr.io/panoti/prefect-orion:main
+    command:
+      - prefect
+      - agent
+      - start
+      - -q
+      - default
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PREFECT_LOGGING_LEVEL: DEBUG
+      DOCKER_HOST: unix://var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - prefect
+    depends_on:
+      prefect-server:
+        condition: service_started
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2023-04-20T17-56-55Z
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+    command:
+      - server
+      - /data
+      - --console-address
+      - :9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    ports:
+      - published: 9000
+        target: 9000
+      - published: 9001
+        target: 9001
+    networks:
+      - prefect
+
+networks:
+  prefect:
+    name: prefect
+
+volumes:
+  postgres_data:
+  prefect_data:
+  minio_data:
