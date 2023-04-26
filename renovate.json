@@ -5,7 +5,7 @@
                 "docker"
             ],
             "matchPackageNames": [
-                "n8nio/n8n"
+                "prefecthq/prefect"
             ],
             "versioning": "semver",
             "automerge": true,
