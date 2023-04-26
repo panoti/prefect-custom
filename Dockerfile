@@ -1,4 +1,4 @@
-FROM prefecthq/prefect:2.10.5-python3.9-kubernetes
+FROM prefecthq/prefect:2.10.5-python3.11
 
 RUN apt update && \
     apt install -y vim && \
