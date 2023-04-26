@@ -8,6 +8,7 @@
                 "prefecthq/prefect"
             ],
             "matchCurrentVersion": "/^\\d+\\.\\d+\\.\\d+\\-python\\d+\\.\\d+$/",
+            "matchCurrentValue": "/^\\d+\\.\\d+\\.\\d+\\-python\\d+\\.\\d+$/",
             "versioning": "loose",
             "automerge": true,
             "automergeType": "branch",
