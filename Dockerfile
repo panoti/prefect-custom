@@ -1,4 +1,4 @@
-FROM prefecthq/prefect:2.10.13-python3.11
+FROM prefecthq/prefect:2.10.14-python3.11
 
 #RUN apt update && \
 #    apt install -y vim && \
